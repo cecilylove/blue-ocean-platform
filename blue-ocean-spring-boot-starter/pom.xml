@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>com.cecilylove</groupId>
+        <artifactId>blue-ocean-platform</artifactId>
+        <version>1.0.0</version>
+    </parent>
+
+    <artifactId>blue-ocean-spring-boot-starter</artifactId>
+
+    <name>blue-ocean-spring-boot-starter</name>
+    <description>Spring Boot 启动器</description>
+
+    <properties>
+
+    </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>com.cecilylove</groupId>
+                <artifactId>blue-ocean-dependencies</artifactId>
+                <version>${project.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <dependencies>
+        <!-- 引入 Core -->
+        <dependency>
+            <groupId>com.cecilylove</groupId>
+            <artifactId>blue-ocean-core</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+    </dependencies>
+
+</project>
