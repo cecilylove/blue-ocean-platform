@@ -1,11 +1,11 @@
 # 🌊 Blue Ocean Platform 基础架构工程设计方案
 
-> **Build Less, Create More.** \> 基于 Spring Boot 的高内聚、低耦合、开箱即用的企业级开发底座。
+> **Build Less, Create More.** 基于 Spring Boot 的高内聚、低耦合、开箱即用的企业级开发底座。
 
 | 项目信息 | 内容 |
 | :--- | :--- |
 | **JDK 版本** | 21+ |
-| **Spring Boot** | 3.2.x |
+| **Spring Boot** | 3.5.x |
 
 -----
 
@@ -71,7 +71,7 @@ graph TD
 
 **定位**：系统的“血液”，保持绝对纯净，不依赖具体的 Web 或 DB 框架，仅包含通用对象。
 
-* **API 协议**：定义统一响应体 `R<T>`、分页响应 `PageResult<T>`。
+* **API 协议**：定义统一响应体 `Result<T>`、分页响应 `PageResult<T>`。
 * **异常体系**：定义业务异常 `BusinessException` 及全局错误码接口 `RespCode`。
 * **上下文模型**：定义 `CurrentUserInfo` 及基于 `ThreadLocal` 的 `UserContextUtil`，实现跨模块的用户信息透传。
 * **常量枚举**：全局配置常量、数据库状态枚举等。
@@ -99,7 +99,7 @@ graph TD
 
 **定位**：数据层的“管家”。
 
-* **自动填充 (`MetaObjectHandler`)**：插入/更新时自动填充 `createTime`, `updateTime`, `createdBy`, `updatedBy` (自动从 Core 的 `UserContextUtil` 获取当前用户)。
+* **自动填充 (`MetaObjectHandler`)**：插入/更新时自动填充 `createdTime`, `updatedTime`, `createdBy`, `updatedBy` (自动从 Core 的 `UserContextUtil` 获取当前用户)。
 * **插件体系**：
     * **多租户插件**：支持 SaaS 场景下的数据隔离 (`TenantLineHandler`)。
     * **分页插件**：集成物理分页。
@@ -151,12 +151,24 @@ graph TD
 blue-ocean:
   # Web 模块配置
   web:
+    enabled: true
     global-exception-handler:
       enabled: true  # 开启全局异常拦截
     jackson:
+      enabled: true
+      enable-date-format: true
       date-format: "yyyy-MM-dd HH:mm:ss"
       time-zone: "GMT+8"
       enable-long-to-string: true # 开启 Long -> String 精度处理
+
+  # MyBatis-Plus 模块配置
+  mybatis-plus:
+    enabled: true
+    db-type: MYSQL
+    enable-pagination: true
+    enable-optimistic-locker: true
+    enable-block-attack: true
+    enable-tenant-line: true
 ```
 
 -----
@@ -170,12 +182,12 @@ blue-ocean:
 ```java
 // ✅ 推荐写法
 if (user == null) {
-    throw new BusinessException(CommonRespCode.DATA_NOT_FOUND);
+    throw new BusinessException(CommonRespCode.PARAM_ERROR, "用户不存在");
 }
 
 // ❌ 不推荐写法 (底座无法拦截处理)
 if (user == null) {
-    return Result.fail("用户不存在");
+    return Result.error(CommonRespCode.PARAM_ERROR.getCode(), "用户不存在");
 }
 ```
 
@@ -188,7 +200,7 @@ if (user == null) {
 @TableName("t_order")
 public class Order extends BaseEntity {
     private String orderNo;
-    // id, createTime, deleted 等字段已由父类 BaseEntity 提供，无需重复定义
+    // id, createdTime, deleted 等字段已由父类 BaseEntity 提供，无需重复定义
 }
 ```
 
