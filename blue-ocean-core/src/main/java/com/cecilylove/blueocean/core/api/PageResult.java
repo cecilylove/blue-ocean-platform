@@ -29,6 +29,7 @@ public class PageResult<T> extends Result<PageResult.PageInfo<T>> {
         PageResult<T> result = new PageResult<>();
         result.setCode(CommonRespCode.SUCCESS.getCode());
         result.setMessage(CommonRespCode.SUCCESS.getMessage());
+        result.setSuccess(true);
 
         PageInfo<T> pageInfo = new PageInfo<>();
         pageInfo.setCurrent(current);
