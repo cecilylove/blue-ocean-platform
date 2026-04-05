@@ -2,7 +2,7 @@ package com.cecilylove.blueocean.web.handler;
 
 import com.cecilylove.blueocean.core.api.Result;
 import com.cecilylove.blueocean.core.enums.CommonRespCode;
-import com.cecilylove.blueocean.core.exception.BusinessException;
+import com.cecilylove.blueocean.core.exception.BlueOceanBusinessException;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.ValidationException;
@@ -40,11 +40,11 @@ public class GlobalExceptionHandler {
      * 捕获自定义业务异常
      * 一般由业务代码手动抛出
      *
-     * @param e 业务异常
+     * @param e 业务异常 (BlueOceanBusinessException)
      * @return 标准结果 Result
      */
-    @ExceptionHandler(BusinessException.class)
-    public Result<Void> handleBusinessException(BusinessException e) {
+    @ExceptionHandler(BlueOceanBusinessException.class)
+    public Result<Void> handleBusinessException(BlueOceanBusinessException e) {
         log.warn("业务异常: code={}, msg={}", e.getCode(), e.getMessage());
         return Result.error(e.getCode(), e.getMessage());
     }

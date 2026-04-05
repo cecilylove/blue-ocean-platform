@@ -1,121 +1,47 @@
-# 🌊 Blue Ocean Platform 基础架构工程设计方案
+# 🌊 Blue Ocean Platform (蓝海平台)
 
-> **Build Less, Create More.** 基于 Spring Boot 的高内聚、低耦合、开箱即用的企业级开发底座。
+> **Build Less, Create More.** 基于 Spring Boot 3.5.x + JDK 21 的高内聚、开箱即用的企业级开发底座。
 
-| 项目信息 | 内容 |
-| :--- | :--- |
-| **JDK 版本** | 21+ |
-| **Spring Boot** | 3.5.x |
+[![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](LICENSE)
+[![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.5.10-brightgreen.svg)](https://spring.io/projects/spring-boot)
+[![JDK](https://img.shields.io/badge/JDK-21-orange.svg)](https://www.oracle.com/java/technologies/downloads/#java21)
 
------
+---
 
-## 📖 1. 项目背景与建设目标
+## 📖 1. 项目简介
 
-### 1.1 背景
+**Blue Ocean Platform** 是一套标准化的技术基石，旨在解决企业级开发中“重复造轮子”、“规范不统一”和“依赖地狱”等痛点。它通过高度抽象的 Starter 机制，将多租户、全局异常、审计日志、序列化精度等复杂底层逻辑下沉，让开发者只需关注核心业务。
 
-在日常的微服务或分布式开发中，团队往往面临以下痛点：
+### ✨ 核心特性
+*   🎯 **版本仲裁**：采用**独立外置 BOM** (`blue-ocean-dependencies`) 模式，统一管理第三方与自身模块版本，彻底告别 Jar 冲突。
+*   🚀 **现代基石**：全面拥抱 **JDK 21**（虚拟线程就绪）与 **Spring Boot 3.5.x**。
+*   🛡️ **企业级增强**：内建企业级 `GlobalExceptionHandler`、MyBatis-Plus 多租户隔离、Jackson 序列化精度修复等。
+*   🧩 **聚合配置**：采用模块化聚合配置（`WebAutoConfiguration`），支持按需插拔与用户自定义 Bean 无缝覆盖。
 
-* **重复造轮子**：每个项目都要重新写一套统一返回值、全局异常处理、MyBatis 配置和公共工具类，严重浪费开发时间。
-* **规范不统一**：不同项目由不同人员搭建，导致接口风格迥异，异常码定义混乱，维护成本高昂。
-* **依赖地狱**：第三方依赖版本管理混乱，升级困难。
+---
 
-### 1.2 建设目标
+## 🏗️ 2. 工程架构
 
-**Blue Ocean (蓝海平台)** 旨在解决上述问题，提供一套标准化的技术基石：
-
-* 🎯 **统一规范**：强制统一 API 响应格式 (`Result`)、异常编码 (`RespCode`)、日期序列化格式等。
-* 🚀 **提效开发**：通过自定义 Starter (`Web`, `MyBatis-Plus`) 屏蔽底层繁琐配置，业务开发只需引入依赖即可专注业务逻辑。
-* 🛡️ **隔离复杂**：将多租户处理、数据权限、防全表更新等复杂逻辑下沉到底座，对业务层透明。
-* ⚖️ **版本仲裁**：通过 BOM (`Dependencies`) 统一管理第三方依赖版本，彻底避免“依赖地狱”。
-
------
-
-## 🏗️ 2. 总体架构设计
-
-本项目采用 **Maven 多模块 (Multi-Module)** 架构，遵循 **Core + Starter** 的分层设计原则，确保模块职责单一、依赖清晰。
-
-### 2.1 工程拓扑结构
+本项目采用 **Maven 多模块** 架构，遵循 **BOM -> Core -> Starter** 的演进路径。
 
 ```text
-blue-ocean-platform (Root Aggregator & Parent)
-├── blue-ocean-dependencies (BOM - 版本控制中心)
-├── blue-ocean-core (核心通用模块 - 纯净 Java 工具)
-├── blue-ocean-spring-boot-starter (基础底座 - 上下文与 AOP)
-├── blue-ocean-spring-boot-starter-web (Web 增强 - MVC 扩展)
-└── blue-ocean-spring-boot-starter-mybatis-plus (数据增强 - MP 扩展)
+blue-ocean-platform (Root Aggregator)
+├── blue-ocean-dependencies (BOM - 独立发布的版本控制中心)
+├── blue-ocean-core (核心通用模块 - 纯净 Java 工具、POJO、枚举)
+├── blue-ocean-spring-boot-starter (基础底座 - Spring 上下文感知)
+├── blue-ocean-spring-boot-starter-web (Web 增强 - MVC 全局拦截、Jackson 增强)
+└── blue-ocean-spring-boot-starter-mybatis-plus (数据增强 - 自动填充、多租户、安全拦截)
 ```
 
-### 2.2 模块依赖关系图
+---
 
-```mermaid
-graph TD
-    BOM[blue-ocean-dependencies] --> Platform[blue-ocean-platform]
-    Platform --> Core
-    Platform --> BaseStarter
-    Platform --> WebStarter
-    Platform --> MpStarter
+## 🚀 3. 快速开始 (Quick Start)
 
-    Core[blue-ocean-core] --> |提供POJO/Utils| BaseStarter[blue-ocean-spring-boot-starter]
-    BaseStarter --> |提供Spring环境| WebStarter[starter-web]
-    BaseStarter --> |提供Spring环境| MpStarter[starter-mybatis-plus]
-    
-    style BOM fill:#f9f,stroke:#333,stroke-width:2px
-    style Core fill:#bbf,stroke:#333,stroke-width:2px
-```
 
------
-
-## 📦 3. 核心模块实现方案
-
-### 3.1 💎 Core 模块 (`blue-ocean-core`)
-
-**定位**：系统的“血液”，保持绝对纯净，不依赖具体的 Web 或 DB 框架，仅包含通用对象。
-
-* **API 协议**：定义统一响应体 `Result<T>`、分页响应 `PageResult<T>`。
-* **异常体系**：定义业务异常 `BusinessException` 及全局错误码接口 `RespCode`。
-* **上下文模型**：定义 `CurrentUserInfo` 及基于 `ThreadLocal` 的 `UserContextUtil`，实现跨模块的用户信息透传。
-* **常量枚举**：全局配置常量、数据库状态枚举等。
-
-### 3.2 ⚙️ 基础 Starter (`blue-ocean-spring-boot-starter`)
-
-**定位**：系统的“骨架”，提供 Spring 上下文感知能力。
-
-* **SpringUtil**：实现 `ApplicationContextAware`，解决在静态方法或非 Bean 对象中无法获取 Spring Bean 的痛点。
-* **基础聚合**：聚合 `spring-boot-starter`、`spring-boot-starter-aop`，业务方引入此模块即可获得基础 Spring 能力。
-
-### 3.3 🌐 Web 增强 Starter (`starter-web`)
-
-**定位**：Web 层的“防盗门”与“翻译官”。
-
-* **全局异常处理 (`GlobalExceptionHandler`)**：
-    * 统一拦截 `BusinessException`、参数校验异常 (`MethodArgumentNotValidException`)、404 等系统异常。
-    * 将异常转换为标准的 JSON 结构，前端不再面对 500 堆栈信息。
-* **Jackson 序列化增强**：
-    * **Long 转 String**：解决前端 JavaScript 丢失 19 位 Long 类型精度的问题。
-    * **日期格式化**：统一处理 JDK8 日期类型 (`LocalDateTime`) 的序列化格式。
-* **配置聚合**：采用 `@Import` 聚合模式，通过 `WebProperties` (前缀 `blue-ocean.web`) 统一管理开关。
-
-### 3.4 💾 MyBatis-Plus 增强 Starter (`starter-mybatis-plus`)
-
-**定位**：数据层的“管家”。
-
-* **自动填充 (`MetaObjectHandler`)**：插入/更新时自动填充 `createdTime`, `updatedTime`, `createdBy`, `updatedBy` (自动从 Core 的 `UserContextUtil` 获取当前用户)。
-* **插件体系**：
-    * **多租户插件**：支持 SaaS 场景下的数据隔离 (`TenantLineHandler`)。
-    * **分页插件**：集成物理分页。
-    * **安全插件**：防止全表更新/删除 (`BlockAttackInnerInterceptor`)。
-* **BaseEntity**：提供实体基类，封装 ID、审计字段、逻辑删除字段。
-
------
-
-## 🚀 4. 接入指南 (Quick Start)
-
-### 4.1 引入依赖
-
-在业务服务的 `pom.xml` 中引入需要的 Starter。**注意：必须先引入 BOM 以进行版本仲裁。**
+### 3.1 引入版本管理 (BOM)
+在业务服务的 `pom.xml` 中优先引入独立 BOM。这确保了所有子模块都能获得正确的版本号，无需手动填写 `<version>`。
 
 ```xml
-<!-- 1. 引入版本管理 (BOM) -->
 <dependencyManagement>
     <dependencies>
         <dependency>
@@ -127,15 +53,20 @@ graph TD
         </dependency>
     </dependencies>
 </dependencyManagement>
+```
 
+### 3.2 引入 Starter
+根据业务需求引入对应功能：
+
+```xml
 <dependencies>
-    <!-- 2. Web 开发引入 -->
+    <!-- Web 开发 (含全局异常、Jackson 增强) -->
     <dependency>
         <groupId>com.cecilylove</groupId>
         <artifactId>blue-ocean-spring-boot-starter-web</artifactId>
     </dependency>
 
-    <!-- 3. 数据库开发引入 -->
+    <!-- 数据库开发 (含多租户、自动填充) -->
     <dependency>
         <groupId>com.cecilylove</groupId>
         <artifactId>blue-ocean-spring-boot-starter-mybatis-plus</artifactId>
@@ -143,83 +74,55 @@ graph TD
 </dependencies>
 ```
 
-### 4.2 配置文件示例 (`application.yml`)
+---
 
-底座组件提供了统一的配置前缀 `blue-ocean`，您可以按需开启或关闭功能。
+## ⚙️ 4. 核心配置清单
+
+底座组件提供了统一的 `blue-ocean` 前缀配置。
 
 ```yaml
 blue-ocean:
-  # Web 模块配置
+  # 🌐 Web 模块 (默认开启)
   web:
     enabled: true
     global-exception-handler:
-      enabled: true  # 开启全局异常拦截
+      enabled: true  # 开启企业级全局异常拦截
     jackson:
       enabled: true
       enable-date-format: true
       date-format: "yyyy-MM-dd HH:mm:ss"
-      time-zone: "GMT+8"
-      enable-long-to-string: true # 开启 Long -> String 精度处理
-
-  # MyBatis-Plus 模块配置
+      enable-long-to-string: false # 解决前端 JS 精度丢失，默认 false，按需开启
+  
+  # 💾 MyBatis-Plus 模块 (默认开启)
   mybatis-plus:
     enabled: true
-    db-type: MYSQL
-    enable-pagination: true
-    enable-optimistic-locker: true
-    enable-block-attack: true
-    enable-tenant-line: true
+    enable-tenant-line: true # 开启多租户自动隔离插件
+    enable-pagination: true   # 开启物理分页
+    enable-block-attack: true # 开启防全表更新/删除保护
 ```
 
------
+---
 
-## 🛠️ 5. 开发规范与扩展
+## 🛠️ 5. 扩展与定制 (Extension)
 
-### 5.1 异常处理规范
+### 5.1 如何覆盖框架默认逻辑？
+框架内所有核心 Bean 均使用 `@ConditionalOnMissingBean` 标注。
 
-业务代码中遇到错误时，请**直接抛出异常**，严禁手动返回错误码对象。
+*   **Jackson 定制**：只需在您的项目中定义任何 `Jackson2ObjectMapperBuilderCustomizer`，Spring 将会自动聚合您的配置。
+*   **异常处理器定制**：您可以直接继承 `GlobalExceptionHandler` 并标注 `@RestControllerAdvice` 注册自己的 Bean 即可全量接管异常逻辑。
 
-```java
-// ✅ 推荐写法
-if (user == null) {
-    throw new BusinessException(CommonRespCode.PARAM_ERROR, "用户不存在");
-}
+### 5.2 业务开发规范建议
+1.  **异常捕获**：业务层严禁吞掉异常，应直接 `throw new BlueOceanBusinessException(...)`，由底座进行标准化 JSON 返回。
+2.  **用户信息**：通过 `UserContextUtil.getUserId()` 随时随地获取当前登录用户。
+3.  **懒加载 ext**：`CurrentUserInfo.getExt()` 支持懒加载初始化的原始引用，可直接进行 `put` 操作。
 
-// ❌ 不推荐写法 (底座无法拦截处理)
-if (user == null) {
-    return Result.error(CommonRespCode.PARAM_ERROR.getCode(), "用户不存在");
-}
-```
+---
 
-### 5.2 数据库实体规范
+## 📅 6. 路线图 (Roadmap)
+*   [x] 1.0.0 - 核心底座、BOM 独立、Web/MP 增强
+*   [ ] 1.1.0 - Redis 分布式锁与缓存 Starter
+*   [ ] 1.2.0 - 基于虚拟线程的 Log Starter (TraceId)
 
-所有实体类建议继承 `BaseEntity`，以利用自动填充特性。
+---
 
-```java
-@Data
-@TableName("t_order")
-public class Order extends BaseEntity {
-    private String orderNo;
-    // id, createdTime, deleted 等字段已由父类 BaseEntity 提供，无需重复定义
-}
-```
-
-### 5.3 如何扩展新的 Starter？
-
-如果您需要新增一个功能模块（例如 Redis 增强），请遵循以下标准化步骤：
-
-1.  **创建模块**：命名为 `blue-ocean-spring-boot-starter-redis`。
-2.  **引入依赖**：引入 `spring-boot-starter-data-redis` 和 `blue-ocean-core`。
-3.  **编写配置**：
-    * 创建 `RedisProperties` (`@ConfigurationProperties`)。
-    * 创建 `RedisAutoConfiguration`，使用 `@ConditionalOnProperty` 控制加载。
-4.  **注册 SPI**：在 `META-INF/spring/org.springframework.boot.autoconfigure.AutoConfiguration.imports` 中注册配置类。
-
------
-
-## 📅 6. 维护计划
-
-* **当前版本**: `1.0.0` (基础功能闭环)
-* **下个版本规划**:
-    * 集成 Redis Starter (分布式锁、缓存封装)
-    * 集成 Log Starter (TraceId 链路追踪)
+**Maintenance by cecilylove.** 🌊
