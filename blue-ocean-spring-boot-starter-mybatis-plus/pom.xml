@@ -14,24 +14,6 @@
     <name>blue-ocean-spring-boot-starter-mybatis-plus</name>
     <description>MyBatis Plus 增强启动器，讲一些底层功能封装了，不需要重复开发</description>
 
-    <properties>
-        <maven.compiler.source>21</maven.compiler.source>
-        <maven.compiler.target>21</maven.compiler.target>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    </properties>
-
-    <dependencyManagement>
-        <dependencies>
-            <dependency>
-                <groupId>com.cecilylove</groupId>
-                <artifactId>blue-ocean-dependencies</artifactId>
-                <version>${project.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
-
     <dependencies>
 
         <dependency>

@@ -3,25 +3,32 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <parent>
-        <groupId>com.cecilylove</groupId>
-        <artifactId>blue-ocean-platform</artifactId>
-        <version>1.0.0</version>
-    </parent>
 
+    <!-- 独立顶层 POM，不继承任何 parent，参考 spring-boot-dependencies 设计 -->
+    <groupId>com.cecilylove</groupId>
     <artifactId>blue-ocean-dependencies</artifactId>
-
+    <version>1.0.0</version>
     <packaging>pom</packaging>
 
     <name>blue-ocean-dependencies</name>
-    <description>版本控制中心 (BOM) - 所有版本号都在这里定义</description>
+    <description>版本控制中心 (BOM) - 所有版本号都在这里集中定义，参考 spring-boot-dependencies 的独立设计</description>
 
     <properties>
+        <!-- Blue Ocean 自身版本 -->
+        <blue-ocean.version>1.0.0</blue-ocean.version>
 
+        <!-- Spring Boot 版本 -->
+        <spring-boot.version>3.5.10</spring-boot.version>
+
+        <!-- 常用工具包版本 -->
+        <hutool.version>5.8.43</hutool.version>
+        <lombok.version>1.18.42</lombok.version>
+        <mybatis-plus.version>3.5.16</mybatis-plus.version>
     </properties>
 
     <dependencyManagement>
         <dependencies>
+
             <!-- 1. Spring Boot 依赖管理 -->
             <dependency>
                 <groupId>org.springframework.boot</groupId>
@@ -33,25 +40,54 @@
 
             <!-- 2. 第三方依赖管理 -->
 
-            <!-- 常用工具包 -->
+            <!-- Hutool 工具包 -->
             <dependency>
                 <groupId>cn.hutool</groupId>
                 <artifactId>hutool-all</artifactId>
                 <version>${hutool.version}</version>
             </dependency>
 
-            <!-- MyBatis Plus 依赖管理 -->
+            <!-- Lombok（显式声明，覆盖 Spring Boot BOM 中的版本） -->
+            <dependency>
+                <groupId>org.projectlombok</groupId>
+                <artifactId>lombok</artifactId>
+                <version>${lombok.version}</version>
+            </dependency>
+
+            <!-- MyBatis Plus -->
             <dependency>
                 <groupId>com.baomidou</groupId>
                 <artifactId>mybatis-plus-spring-boot3-starter</artifactId>
                 <version>${mybatis-plus.version}</version>
             </dependency>
 
-            <!-- MyBatis Plus 插件 -->
+            <!-- MyBatis Plus JSqlParser 插件 -->
             <dependency>
                 <groupId>com.baomidou</groupId>
                 <artifactId>mybatis-plus-jsqlparser</artifactId>
                 <version>${mybatis-plus.version}</version>
+            </dependency>
+
+            <!-- 3. Blue Ocean 自身模块版本管理 -->
+            <dependency>
+                <groupId>com.cecilylove</groupId>
+                <artifactId>blue-ocean-core</artifactId>
+                <version>${blue-ocean.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.cecilylove</groupId>
+                <artifactId>blue-ocean-spring-boot-starter</artifactId>
+                <version>${blue-ocean.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.cecilylove</groupId>
+                <artifactId>blue-ocean-spring-boot-starter-web</artifactId>
+                <version>${blue-ocean.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.cecilylove</groupId>
+                <artifactId>blue-ocean-spring-boot-starter-mybatis-plus</artifactId>
+                <version>${blue-ocean.version}</version>
             </dependency>
 
         </dependencies>
