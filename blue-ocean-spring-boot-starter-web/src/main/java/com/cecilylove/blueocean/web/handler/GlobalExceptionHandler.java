@@ -26,7 +26,7 @@ import java.util.stream.Collectors;
  * 全局异常处理器 (企业级完整版)
  * 统一拦截 Controller 抛出的异常，返回标准 JSON 格式
  *
- * @author Wang Li Hong
+ * @author cecilylove
  * @since 1.0.0
  */
 @Slf4j

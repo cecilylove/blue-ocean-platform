@@ -7,7 +7,7 @@ import lombok.Getter;
 /**
  * 全局逻辑删除状态枚举
  *
- * @author  Wang Li Hong
+ * @author cecilylove
  * @since 1.0.0
  */
 @Getter

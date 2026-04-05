@@ -9,7 +9,7 @@ import net.sf.jsqlparser.expression.LongValue;
  * 默认租户处理器
  * 负责在执行 SQL 时自动追加 WHERE tenant_id = ?
  *
- * @author Wang Li Hong
+ * @author cecilylove
  * @since 1.0.0
  */
 public class DefaultTenantHandler implements TenantLineHandler {

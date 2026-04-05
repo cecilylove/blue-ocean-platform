@@ -8,7 +8,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 /**
- * @author Wang Li Hong
+ * @author cecilylove
  * @since 1.0.0
  */
 @Data

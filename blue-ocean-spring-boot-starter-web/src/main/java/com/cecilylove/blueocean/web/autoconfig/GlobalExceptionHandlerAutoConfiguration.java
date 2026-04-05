@@ -13,7 +13,7 @@ import org.springframework.context.annotation.Bean;
 /**
  * 全局异常处理器自动装配
  *
- * @author Wang Li Hong
+ * @author cecilylove
  * @since 1.0.0
  */
 @AutoConfiguration // 专门用于自动装配的注解

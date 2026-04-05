@@ -4,16 +4,19 @@ package com.cecilylove.blueocean.core.api;
 import com.cecilylove.blueocean.core.enums.CommonRespCode;
 import lombok.Data;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
  * 统一 API 响应结果封装
  *
- * @author Wang Li Hong
+ * @author cecilylove
  * @since 1.0.0
  */
 @Data
 public class Result<T> implements Serializable {
+    @Serial
+    private static final long serialVersionUID = 1L;
 
     /**
      * 响应码

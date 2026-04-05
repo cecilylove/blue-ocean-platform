@@ -22,7 +22,7 @@ import java.util.TimeZone;
 /**
  * Jackson 配置自动装配
  *
- * @author Wang Li Hong
+ * @author cecilylove
  * @since 1.0.0
  */
 @AutoConfiguration

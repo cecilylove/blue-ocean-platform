@@ -4,7 +4,7 @@ package com.cecilylove.blueocean.core.api;
  * 错误码接口
  * 让所有的枚举类都实现这个接口，方便扩展（比如 AIErrorCode, UserErrorCode）
  *
- * @author Wang Li Hong
+ * @author cecilylove
  * @since 1.0.0
  */
 public interface RespCode {

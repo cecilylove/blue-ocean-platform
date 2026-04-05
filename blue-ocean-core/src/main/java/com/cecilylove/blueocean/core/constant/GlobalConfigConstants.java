@@ -6,7 +6,7 @@ import lombok.NoArgsConstructor;
 /**
  * 全局配置常量
  *
- * @author  Wang Li Hong
+ * @author cecilylove
  * @since 1.0.0
  */
 @NoArgsConstructor(access = AccessLevel.PRIVATE) // 彻底禁止实例化

@@ -7,7 +7,7 @@ import lombok.Getter;
 /**
  * 基础通用响应码枚举类
  *
- * @author Wang Li Hong
+ * @author cecilylove
  * @since 1.0.0
  */
 @Getter

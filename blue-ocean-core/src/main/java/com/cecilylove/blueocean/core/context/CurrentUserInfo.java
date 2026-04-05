@@ -10,7 +10,7 @@ import java.util.Map;
 /**
  * 当前用户信息
  *
- * @author Wang Li Hong
+ * @author cecilylove
  * @since 1.0.0
  */
 @Data

@@ -14,7 +14,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  * SQL 性能规范: IllegalSQLInnerInterceptor
  * 防止全表更新与删除: BlockAttackInnerInterceptor
  *
- * @author Wang Li Hong
+ * @author cecilylove
  * @since 1.0.0
  */
 @Data

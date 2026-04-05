@@ -3,10 +3,12 @@ package com.cecilylove.blueocean.core.constant;
 /**
  * 数据库常量
  *
- * @author  Wang Li Hong
+ * @author cecilylove
  * @since 1.0.0
  */
-public class DbConstant {
+public final class DbConstant {
+
+    private DbConstant() {}
 
     /**
      * 逻辑删除值（String类型，供注解使用）

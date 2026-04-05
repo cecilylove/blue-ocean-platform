@@ -7,7 +7,7 @@ import lombok.Getter;
  * 统一业务异常
  * 开发中只要 throw new BusinessException(...) 就会被全局捕获
  *
- * @author Wang Li Hong
+ * @author cecilylove
  * @since 1.0.0
  */
 @Getter

@@ -3,16 +3,19 @@ package com.cecilylove.blueocean.core.api;
 import com.cecilylove.blueocean.core.enums.CommonRespCode;
 import lombok.Data;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.List;
 
 /**
  * 分页结果集
  *
- * @author Wang Li Hong
+ * @author cecilylove
  * @since 1.0.0
  */
 public class PageResult<T> extends Result<PageResult.PageInfo<T>> {
+    @Serial
+    private static final long serialVersionUID = 1L;
 
 
     /**

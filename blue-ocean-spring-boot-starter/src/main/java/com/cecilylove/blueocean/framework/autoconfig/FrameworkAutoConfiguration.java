@@ -8,7 +8,7 @@ import org.springframework.context.annotation.Bean;
 /**
  * 框架层自动装配
  *
- * @author Wang Li Hong
+ * @author cecilylove
  * @since 1.0.0
  */
 @AutoConfiguration

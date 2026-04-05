@@ -11,10 +11,12 @@ import java.util.Collection;
  * 业务断言工具类
  * 类似于 JUnit 的 Assert，但是抛出的是 BusinessException
  *
- * @author Wang Li Hong
+ * @author cecilylove
  * @since 1.0.0
  */
-public class BizAssertUtils {
+public final class BizAssertUtils {
+
+    private BizAssertUtils() {}
 
     /**
      * 对象不能为空

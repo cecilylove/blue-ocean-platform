@@ -9,7 +9,7 @@ import org.springframework.context.ApplicationEvent;
  * Spring 上下文工具类
  * 用于在普通 Java 类（非 Bean）中手动获取 Spring Bean 或发布事件
  *
- * @author Wang Li Hong
+ * @author cecilylove
  * @since 1.0.0
  */
 public class SpringUtil implements ApplicationContextAware {

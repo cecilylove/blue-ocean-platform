@@ -6,10 +6,11 @@ import java.util.Optional;
  * 用户上下文工具类 (基于 ThreadLocal)
  * 用于在当前线程中存储和获取用户信息
  *
- * @author Wang Li Hong
+ * @author cecilylove
  * @since 1.0.0
  */
-public class UserContextUtil {
+public final class UserContextUtil {
+
 
     private static final ThreadLocal<CurrentUserInfo> THREAD_LOCAL = new ThreadLocal<>();
 
