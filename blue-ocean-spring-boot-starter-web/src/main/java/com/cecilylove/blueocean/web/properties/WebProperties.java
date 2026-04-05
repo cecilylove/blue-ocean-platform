@@ -6,10 +6,14 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
  * Web 模块统一配置类 (聚合模式)
+ *
+ * @author cecilylove
+ * @since 1.0.0
  */
 @Data
 @ConfigurationProperties(prefix = WebProperties.PREFIX)
 public class WebProperties {
+
 
     public static final String PREFIX = "blue-ocean.web";
 
@@ -64,7 +68,7 @@ public class WebProperties {
          * 是否开启 Long 类型自动转 String（解决前端 JS 精度丢失问题）
          * 默认 false
          */
-        private boolean enableLongToString = true;
+        private boolean enableLongToString = false;
 
         /**
          * 是否开启全局日期格式化

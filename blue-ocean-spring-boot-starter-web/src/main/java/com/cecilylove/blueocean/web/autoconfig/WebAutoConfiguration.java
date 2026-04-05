@@ -15,6 +15,9 @@ import org.springframework.context.annotation.Import;
  * 1. 激活配置属性类 WebProperties
  * 2. 聚合导入各子功能的自动配置类
  * 3. 作为一个总开关，方便在 imports 文件中注册
+ *
+ * @author cecilylove
+ * @since 1.0.0
  */
 @AutoConfiguration
 @EnableConfigurationProperties(WebProperties.class)

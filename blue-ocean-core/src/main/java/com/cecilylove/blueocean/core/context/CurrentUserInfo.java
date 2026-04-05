@@ -4,7 +4,7 @@ import lombok.Data;
 
 import java.io.Serial;
 import java.io.Serializable;
-import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -45,6 +45,10 @@ public class CurrentUserInfo implements Serializable {
     private Map<String, Object> ext;
 
     public Map<String, Object> getExt() {
-        return ext == null ? Collections.emptyMap() : ext;
+        if (ext == null) {
+            ext = new HashMap<>();
+        }
+        return ext;
     }
+
 }

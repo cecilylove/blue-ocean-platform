@@ -8,7 +8,6 @@ import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.ValidationException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.converter.HttpMessageNotReadableException;
-import org.springframework.stereotype.Component;
 import org.springframework.validation.BindException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -140,7 +139,6 @@ public class GlobalExceptionHandler {
     }
 
     /**
-     * 可能会抛出此异常，而非传统的 ConstraintViolationException
      * 可能会抛出此异常，而非传统的 ConstraintViolationException
      *
      * @param e HandlerMethodValidationException
