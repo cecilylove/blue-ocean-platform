@@ -2,6 +2,7 @@ package com.cecilylove.blueocean.core.exception;
 
 import cn.hutool.core.util.StrUtil;
 import com.cecilylove.blueocean.core.api.RespCode;
+import com.cecilylove.blueocean.core.enums.CommonRespCode;
 import lombok.Getter;
 
 import java.io.Serial;
@@ -20,6 +21,11 @@ public class BlueOceanBusinessException extends RuntimeException {
     private static final long serialVersionUID = 1L;
 
     /**
+     * 默认错误码使用 CommonRespCode.BUSINESS_ERROR
+     */
+    private static final Integer DEFAULT_ERROR_CODE = CommonRespCode.BUSINESS_ERROR.getCode();
+
+    /**
      * 错误码
      */
     private final Integer code;
@@ -27,6 +33,30 @@ public class BlueOceanBusinessException extends RuntimeException {
      * 错误信息
      */
     private final String message;
+
+    /**
+     * 直接传递错误消息构造异常 (使用默认错误码 501)
+     *
+     * @param message 错误消息
+     */
+    public BlueOceanBusinessException(String message) {
+        super(message);
+        this.code = DEFAULT_ERROR_CODE;
+        this.message = message;
+    }
+
+    /**
+     * 使用占位符动态构造错误信息 (使用默认错误码 501)
+     * 支持 SLF4J 风格的 {} 占位符
+     *
+     * @param message 消息模板 (支持 {} 占位符)
+     * @param args    用于填充消息模板的参数列表
+     */
+    public BlueOceanBusinessException(String message, Object... args) {
+        super(StrUtil.format(message, args));
+        this.code = DEFAULT_ERROR_CODE;
+        this.message = StrUtil.format(message, args);
+    }
 
     /**
      * 直接传递错误码枚举构造异常
@@ -76,5 +106,29 @@ public class BlueOceanBusinessException extends RuntimeException {
         super(StrUtil.format(message, args));
         this.code = code;
         this.message = StrUtil.format(message, args);
+    }
+
+    /**
+     * 构造异常并包含原始异常
+     *
+     * @param message 错误消息
+     * @param cause   原始异常
+     */
+    public BlueOceanBusinessException(String message, Throwable cause) {
+        super(message, cause);
+        this.code = DEFAULT_ERROR_CODE;
+        this.message = message;
+    }
+
+    /**
+     * 构造异常并包含原始异常 (使用错误码枚举)
+     *
+     * @param respCode 错误码枚举
+     * @param cause    原始异常
+     */
+    public BlueOceanBusinessException(RespCode respCode, Throwable cause) {
+        super(respCode.getMessage(), cause);
+        this.code = respCode.getCode();
+        this.message = respCode.getMessage();
     }
 }

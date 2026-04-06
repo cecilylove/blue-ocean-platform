@@ -35,6 +35,31 @@ public final class BizAssertUtils {
     }
 
     /**
+     * 断言对象不能为空，并指定自定义错误消息 (支持 {} 占位符)
+     *
+     * @param object  待校验的目标对象
+     * @param message 校验失败时的错误消息 (支持 {} 占位符)
+     * @param args    占位符填充参数
+     * @throws BlueOceanBusinessException 当对象为 null 时抛出此异常
+     */
+    public static void notNull(Object object, String message, Object... args) {
+        if (object == null) {
+            throw new BlueOceanBusinessException(message, args);
+        }
+    }
+
+    /**
+     * 断言对象不能为空，并指定固定错误消息
+     *
+     * @param object  待校验的目标对象
+     * @param message 校验失败时的错误消息
+     * @throws BlueOceanBusinessException 当对象为 null 时抛出此异常
+     */
+    public static void notNull(Object object, String message) {
+        notNull(object, message, (Object[]) null);
+    }
+
+    /**
      * 断言对象必须为空
      *
      * @param object   待校验的目标对象
@@ -45,6 +70,31 @@ public final class BizAssertUtils {
         if (object != null) {
             throw new BlueOceanBusinessException(respCode);
         }
+    }
+
+    /**
+     * 断言对象必须为空，并指定自定义错误消息 (支持 {} 占位符)
+     *
+     * @param object  待校验的目标对象
+     * @param message 校验失败时的错误消息 (支持 {} 占位符)
+     * @param args    占位符填充参数
+     * @throws BlueOceanBusinessException 当对象不为 null 时抛出此异常
+     */
+    public static void isNull(Object object, String message, Object... args) {
+        if (object != null) {
+            throw new BlueOceanBusinessException(message, args);
+        }
+    }
+
+    /**
+     * 断言对象必须为空，并指定固定错误消息
+     *
+     * @param object  待校验的目标对象
+     * @param message 校验失败时的错误消息
+     * @throws BlueOceanBusinessException 当对象不为 null 时抛出此异常
+     */
+    public static void isNull(Object object, String message) {
+        isNull(object, message, (Object[]) null);
     }
 
     /**
@@ -61,6 +111,31 @@ public final class BizAssertUtils {
     }
 
     /**
+     * 断言字符串不能为空，并指定自定义错误消息 (支持 {} 占位符)
+     *
+     * @param text    待校验的目标字符串
+     * @param message 校验失败时的错误消息 (支持 {} 占位符)
+     * @param args    占位符填充参数
+     * @throws BlueOceanBusinessException 当字符串为空或仅包含空白字符时抛出此异常
+     */
+    public static void notBlank(String text, String message, Object... args) {
+        if (text == null || text.trim().isEmpty()) {
+            throw new BlueOceanBusinessException(message, args);
+        }
+    }
+
+    /**
+     * 断言字符串不能为空，并指定固定错误消息
+     *
+     * @param text    待校验的目标字符串
+     * @param message 校验失败时的错误消息
+     * @throws BlueOceanBusinessException 当字符串为空或仅包含空白字符时抛出此异常
+     */
+    public static void notBlank(String text, String message) {
+        notBlank(text, message, (Object[]) null);
+    }
+
+    /**
      * 断言字符串必须为空
      *
      * @param text     待校验的目标字符串
@@ -71,6 +146,31 @@ public final class BizAssertUtils {
         if (!(text == null || text.trim().isEmpty())) {
             throw new BlueOceanBusinessException(respCode);
         }
+    }
+
+    /**
+     * 断言字符串必须为空，并指定自定义错误消息 (支持 {} 占位符)
+     *
+     * @param text    待校验的目标字符串
+     * @param message 校验失败时的错误消息 (支持 {} 占位符)
+     * @param args    占位符填充参数
+     * @throws BlueOceanBusinessException 当字符串不为空时抛出此异常
+     */
+    public static void isBlank(String text, String message, Object... args) {
+        if (!(text == null || text.trim().isEmpty())) {
+            throw new BlueOceanBusinessException(message, args);
+        }
+    }
+
+    /**
+     * 断言字符串必须为空，并指定固定错误消息
+     *
+     * @param text    待校验的目标字符串
+     * @param message 校验失败时的错误消息
+     * @throws BlueOceanBusinessException 当字符串不为空时抛出此异常
+     */
+    public static void isBlank(String text, String message) {
+        isBlank(text, message, (Object[]) null);
     }
 
     /**
@@ -87,6 +187,31 @@ public final class BizAssertUtils {
     }
 
     /**
+     * 断言单列集合不能为空，并指定自定义错误消息 (支持 {} 占位符)
+     *
+     * @param collection 待校验的目标集合
+     * @param message    校验失败时的错误消息 (支持 {} 占位符)
+     * @param args       占位符填充参数
+     * @throws BlueOceanBusinessException 当集合为 null 或不包含任何元素时抛出此异常
+     */
+    public static void notEmpty(Collection<?> collection, String message, Object... args) {
+        if (collection == null || collection.isEmpty()) {
+            throw new BlueOceanBusinessException(message, args);
+        }
+    }
+
+    /**
+     * 断言单列集合不能为空，并指定固定错误消息
+     *
+     * @param collection 待校验的目标集合
+     * @param message    校验失败时的错误消息
+     * @throws BlueOceanBusinessException 当集合为 null 或不包含任何元素时抛出此异常
+     */
+    public static void notEmpty(Collection<?> collection, String message) {
+        notEmpty(collection, message, (Object[]) null);
+    }
+
+    /**
      * 断言单列集合必须为空
      *
      * @param collection 待校验的目标集合
@@ -97,6 +222,31 @@ public final class BizAssertUtils {
         if (!(collection == null || collection.isEmpty())) {
             throw new BlueOceanBusinessException(respCode);
         }
+    }
+
+    /**
+     * 断言单列集合必须为空，并指定自定义错误消息 (支持 {} 占位符)
+     *
+     * @param collection 待校验的目标集合
+     * @param message    校验失败时的错误消息 (支持 {} 占位符)
+     * @param args       占位符填充参数
+     * @throws BlueOceanBusinessException 当集合不为 null 且包含元素时抛出此异常
+     */
+    public static void isEmpty(Collection<?> collection, String message, Object... args) {
+        if (!(collection == null || collection.isEmpty())) {
+            throw new BlueOceanBusinessException(message, args);
+        }
+    }
+
+    /**
+     * 断言单列集合必须为空，并指定固定错误消息
+     *
+     * @param collection 待校验的目标集合
+     * @param message    校验失败时的错误消息
+     * @throws BlueOceanBusinessException 当集合不为 null 且包含元素时抛出此异常
+     */
+    public static void isEmpty(Collection<?> collection, String message) {
+        isEmpty(collection, message, (Object[]) null);
     }
 
     /**
@@ -113,6 +263,31 @@ public final class BizAssertUtils {
     }
 
     /**
+     * 断言表达式是否为 True，并指定自定义错误消息 (支持 {} 占位符)
+     *
+     * @param expression 待校验的布尔表达式
+     * @param message    校验失败时的错误消息 (支持 {} 占位符)
+     * @param args       占位符填充参数
+     * @throws BlueOceanBusinessException 当表达式结果为 false 时抛出此异常
+     */
+    public static void isTrue(boolean expression, String message, Object... args) {
+        if (!expression) {
+            throw new BlueOceanBusinessException(message, args);
+        }
+    }
+
+    /**
+     * 断言表达式是否为 True，并指定固定错误消息
+     *
+     * @param expression 待校验的布尔表达式
+     * @param message    校验失败时的错误消息
+     * @throws BlueOceanBusinessException 当表达式结果为 false 时抛出此异常
+     */
+    public static void isTrue(boolean expression, String message) {
+        isTrue(expression, message, (Object[]) null);
+    }
+
+    /**
      * 断言表达式是否为 False
      *
      * @param expression 待校验的布尔表达式
@@ -124,4 +299,30 @@ public final class BizAssertUtils {
             throw new BlueOceanBusinessException(respCode);
         }
     }
+
+    /**
+     * 断言表达式是否为 False，并指定自定义错误消息 (支持 {} 占位符)
+     *
+     * @param expression 待校验的布尔表达式
+     * @param message    校验失败时的错误消息 (支持 {} 占位符)
+     * @param args       占位符填充参数
+     * @throws BlueOceanBusinessException 当表达式结果为 true 时抛出此异常
+     */
+    public static void isFalse(boolean expression, String message, Object... args) {
+        if (expression) {
+            throw new BlueOceanBusinessException(message, args);
+        }
+    }
+
+    /**
+     * 断言表达式是否为 False，并指定固定错误消息
+     *
+     * @param expression 待校验的布尔表达式
+     * @param message    校验失败时的错误消息
+     * @throws BlueOceanBusinessException 当表达式结果为 true 时抛出此异常
+     */
+    public static void isFalse(boolean expression, String message) {
+        isFalse(expression, message, (Object[]) null);
+    }
 }
+
