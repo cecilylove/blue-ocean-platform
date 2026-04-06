@@ -17,7 +17,9 @@
         <module>blue-ocean-spring-boot-starter</module>
         <module>blue-ocean-spring-boot-starter-web</module>
         <module>blue-ocean-spring-boot-starter-mybatis-plus</module>
+        <module>blue-ocean-spring-boot-starter-redis</module>
     </modules>
+
 
     <properties>
         <java.version>21</java.version>

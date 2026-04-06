@@ -1,0 +1,2 @@
+com.cecilylove.blueocean.redis.autoconfig.BlueOceanRedisAutoConfiguration
+com.cecilylove.blueocean.redis.autoconfig.BlueOceanRedissonAutoConfiguration
