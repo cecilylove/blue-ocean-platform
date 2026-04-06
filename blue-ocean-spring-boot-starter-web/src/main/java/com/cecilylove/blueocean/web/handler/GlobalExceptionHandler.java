@@ -13,6 +13,8 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.ServletRequestBindingException;
+import org.springframework.web.HttpMediaTypeNotSupportedException;
+import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.HandlerMethodValidationException;
@@ -212,6 +214,32 @@ public class GlobalExceptionHandler {
     public Result<Void> handleMaxUploadSizeExceededException(MaxUploadSizeExceededException e) {
         log.warn("文件上传超限: {}", e.getMessage());
         return Result.error(CommonRespCode.PARAM_ERROR.getCode(), "文件大小超过限制，请压缩后上传");
+    }
+
+    /**
+     * 处理 HTTP 方法不支持异常
+     * 场景：接口只接受 POST，但前端发起了 GET 请求
+     *
+     * @param e HttpRequestMethodNotSupportedException
+     * @return 405 错误
+     */
+    @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
+    public Result<Void> handleHttpRequestMethodNotSupportedException(HttpRequestMethodNotSupportedException e) {
+        log.warn("HTTP方法不支持: method={}, supported={}", e.getMethod(), e.getSupportedHttpMethods());
+        return Result.error(405, "请求方法不支持: " + e.getMethod());
+    }
+
+    /**
+     * 处理 HTTP 媒体类型不支持异常
+     * 场景：接口要求 application/json，但前端发送了 text/plain
+     *
+     * @param e HttpMediaTypeNotSupportedException
+     * @return 415 错误
+     */
+    @ExceptionHandler(HttpMediaTypeNotSupportedException.class)
+    public Result<Void> handleHttpMediaTypeNotSupportedException(HttpMediaTypeNotSupportedException e) {
+        log.warn("HTTP媒体类型不支持: current={}, supported={}", e.getContentType(), e.getSupportedMediaTypes());
+        return Result.error(415, "不支持的媒体类型: " + e.getContentType());
     }
 
     // =================================================================================
