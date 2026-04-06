@@ -1,6 +1,5 @@
 package com.cecilylove.blueocean.redis.autoconfig;
 
-import com.cecilylove.blueocean.redis.properties.BlueOceanRedisProperties;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.redisson.Redisson;
@@ -12,7 +11,6 @@ import org.redisson.spring.starter.RedissonAutoConfiguration;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.data.redis.RedisProperties;
 import org.springframework.context.annotation.Bean;
 
@@ -31,7 +29,6 @@ import java.util.List;
 @Slf4j
 @AutoConfiguration(before = RedissonAutoConfiguration.class)
 @ConditionalOnClass(Redisson.class)
-@ConditionalOnProperty(prefix = BlueOceanRedisProperties.PREFIX, name = "enabled", havingValue = "true", matchIfMissing = true)
 public class BlueOceanRedissonAutoConfiguration {
 
     private static final String REDIS_PROTOCOL_PREFIX = "redis://";
@@ -55,7 +52,11 @@ public class BlueOceanRedissonAutoConfiguration {
             config.setCodec(new JsonJacksonCodec(objectMapper));
         }
 
-        // 2. 模式探测与桥接
+        // 2. 核心认证信息下沉到根 Config (修复 Redisson 4.x BaseConfig 过时警告)
+        config.setPassword(redisProperties.getPassword());
+        config.setUsername(redisProperties.getUsername());
+
+        // 3. 模式探测与桥接
         if (redisProperties.getSentinel() != null) {
             log.info(">>>> [Blue Ocean] Redis 哨兵模式桥接开启...");
             buildSentinelConfig(config, redisProperties);
@@ -67,7 +68,7 @@ public class BlueOceanRedissonAutoConfiguration {
             buildSingleConfig(config, redisProperties);
         }
 
-        // 3. 全局基础参数补充
+        // 4. 全局基础参数补充
         config.setNettyThreads(0); // 默认 2 * cores
 
         return Redisson.create(config);
@@ -82,7 +83,6 @@ public class BlueOceanRedissonAutoConfiguration {
         SingleServerConfig serverConfig = config.useSingleServer()
                 .setAddress(protocol + redisProperties.getHost() + ":" + redisProperties.getPort())
                 .setDatabase(redisProperties.getDatabase())
-                .setPassword(redisProperties.getPassword())
                 .setTimeout((int) redisProperties.getTimeout().toMillis())
                 .setConnectTimeout((int) redisProperties.getConnectTimeout().toMillis());
 
@@ -114,7 +114,6 @@ public class BlueOceanRedissonAutoConfiguration {
 
         config.useClusterServers()
                 .addNodeAddress(formattedNodes.toArray(new String[0]))
-                .setPassword(redisProperties.getPassword())
                 .setTimeout((int) redisProperties.getTimeout().toMillis())
                 .setConnectTimeout((int) redisProperties.getConnectTimeout().toMillis());
     }
@@ -140,7 +139,6 @@ public class BlueOceanRedissonAutoConfiguration {
                 .setMasterName(redisProperties.getSentinel().getMaster())
                 .addSentinelAddress(formattedNodes.toArray(new String[0]))
                 .setDatabase(redisProperties.getDatabase())
-                .setPassword(redisProperties.getPassword())
                 .setTimeout((int) redisProperties.getTimeout().toMillis())
                 .setConnectTimeout((int) redisProperties.getConnectTimeout().toMillis());
     }

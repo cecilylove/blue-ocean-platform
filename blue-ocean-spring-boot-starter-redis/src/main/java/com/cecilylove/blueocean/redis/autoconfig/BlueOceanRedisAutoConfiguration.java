@@ -1,6 +1,5 @@
 package com.cecilylove.blueocean.redis.autoconfig;
 
-import com.cecilylove.blueocean.redis.properties.BlueOceanRedisProperties;
 import com.cecilylove.blueocean.redis.utils.RedisUtils;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.PropertyAccessor;
@@ -9,9 +8,7 @@ import com.fasterxml.jackson.databind.jsontype.impl.LaissezFaireSubTypeValidator
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -28,8 +25,6 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
  * @since 1.0.0
  */
 @AutoConfiguration(after = RedisAutoConfiguration.class)
-@ConditionalOnProperty(prefix = BlueOceanRedisProperties.PREFIX, name = "enabled", havingValue = "true", matchIfMissing = true)
-@EnableConfigurationProperties(BlueOceanRedisProperties.class)
 public class BlueOceanRedisAutoConfiguration {
 
     /**

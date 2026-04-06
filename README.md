@@ -10,26 +10,28 @@
 
 ## 📖 1. 项目简介
 
-**Blue Ocean Platform** 是一套标准化的技术基石，旨在解决企业级开发中“重复造轮子”、“规范不统一”和“依赖地狱”等痛点。它通过高度抽象的 Starter 机制，将多租户、全局异常、审计日志、序列化精度等复杂底层逻辑下沉，让开发者只需关注核心业务。
+**Blue Ocean Platform** 是一套标准化的技术基石，旨在解决企业级开发中“重复造轮子”、“规范不统一”和“依赖地狱”等痛点。它通过高度抽象的 Starter 机制，将多租户、全局异常、审计日志、分布式锁、缓存增强等复杂底层逻辑下沉，让开发者只需关注核心业务。
 
 ### ✨ 核心特性
-*   🎯 **版本仲裁**：采用**独立外置 BOM** (`blue-ocean-dependencies`) 模式，统一管理第三方与自身模块版本，彻底告别 Jar 冲突。
-*   🚀 **现代基石**：全面拥抱 **JDK 21**（虚拟线程就绪）与 **Spring Boot 3.5.x**。
-*   🛡️ **企业级增强**：内建企业级 `GlobalExceptionHandler`、MyBatis-Plus 多租户隔离、Jackson 序列化精度修复等。
-*   🧩 **聚合配置**：采用模块化聚合配置（`WebAutoConfiguration`），支持按需插拔与用户自定义 Bean 无缝覆盖。
+*   🎯 **版本管理 (BOM)**：采用 **独立外置 BOM** (`blue-ocean-dependencies`) 模式，一站式接管第三方库（Hutool, Redisson, MP 等）版本，消除 Jar 冲突。
+*   🚀 **现代基石**：全面拥抱 **JDK 21**（虚拟线程适配）与 **Spring Boot 3.5.x** 高级特性。
+*   🛡️ **企业级增强**：内建生产级 `GlobalExceptionHandler`、MyBatis-Plus 多租户隔离、Jackson 序列化精度修复。
+*   ⚡ **Redis 强化**：基于 Redisson 4.3.0，支持插拔式分布式锁 (`@DistributedLock`)、静态代理式 `RedisUtils`。
+*   🧩 **聚合配置**：遵循 Spring Boot 自动装配规约，所有 Bean 均支持 `@ConditionalOnMissingBean` 按需覆盖。
 
 ---
 
 ## 🏗️ 2. 工程架构
 
-本项目采用 **Maven 多模块** 架构，遵循 **BOM -> Core -> Starter** 的演进路径。
+本项目采用 **Maven 多模块** 架构，遵循 **BOM -> Core -> Starter** 的职能解耦。
 
 ```text
 blue-ocean-platform (Root Aggregator)
 ├── blue-ocean-dependencies (BOM - 独立发布的版本控制中心)
-├── blue-ocean-core (核心通用模块 - 纯净 Java 工具、POJO、枚举)
-├── blue-ocean-spring-boot-starter (基础底座 - Spring 上下文感知)
-├── blue-ocean-spring-boot-starter-web (Web 增强 - MVC 全局拦截、Jackson 增强)
+├── blue-ocean-core (核心通用模块 - 纯净 Java 工具、业务异常、标准 Result)
+├── blue-ocean-spring-boot-starter (基础底座 - SpringContextAware & 基础增强)
+├── blue-ocean-spring-boot-starter-web (Web 增强 - MVC 全局拦截、JSON 序列化精度修复)
+├── blue-ocean-spring-boot-starter-redis (缓存增强 - Redisson 集成、分布式锁、RedisUtils)
 └── blue-ocean-spring-boot-starter-mybatis-plus (数据增强 - 自动填充、多租户、安全拦截)
 ```
 
@@ -37,10 +39,14 @@ blue-ocean-platform (Root Aggregator)
 
 ## 🚀 3. 快速开始 (Quick Start)
 
+### 3.1 本地安装 BOM
+由于采用了独立 BOM 设计，首次使用前需将版本控制中心 install 到本地私仓：
+```bash
+mvn clean install -pl blue-ocean-dependencies -N
+```
 
-### 3.1 引入版本管理 (BOM)
-在业务服务的 `pom.xml` 中优先引入独立 BOM。这确保了所有子模块都能获得正确的版本号，无需手动填写 `<version>`。
-
+### 3.2 引入版本管理
+在业务服务的 `pom.xml` 中引入：
 ```xml
 <dependencyManagement>
     <dependencies>
@@ -55,21 +61,18 @@ blue-ocean-platform (Root Aggregator)
 </dependencyManagement>
 ```
 
-### 3.2 引入 Starter
-根据业务需求引入对应功能：
-
+### 3.3 引入 Starter 对其
 ```xml
 <dependencies>
-    <!-- Web 开发 (含全局异常、Jackson 增强) -->
+    <!-- Web & JSON 增强 -->
     <dependency>
         <groupId>com.cecilylove</groupId>
         <artifactId>blue-ocean-spring-boot-starter-web</artifactId>
     </dependency>
-
-    <!-- 数据库开发 (含多租户、自动填充) -->
+    <!-- Redis & 分布式锁 -->
     <dependency>
         <groupId>com.cecilylove</groupId>
-        <artifactId>blue-ocean-spring-boot-starter-mybatis-plus</artifactId>
+        <artifactId>blue-ocean-spring-boot-starter-redis</artifactId>
     </dependency>
 </dependencies>
 ```
@@ -78,27 +81,20 @@ blue-ocean-platform (Root Aggregator)
 
 ## ⚙️ 4. 核心配置清单
 
-底座组件提供了统一的 `blue-ocean` 前缀配置。
-
 ```yaml
 blue-ocean:
   # 🌐 Web 模块 (默认开启)
   web:
     enabled: true
-    global-exception-handler:
-      enabled: true  # 开启企业级全局异常拦截
     jackson:
       enabled: true
-      enable-date-format: true
-      date-format: "yyyy-MM-dd HH:mm:ss"
-      enable-long-to-string: false # 解决前端 JS 精度丢失，默认 false，按需开启
+      enable-long-to-string: true # 解决前端 JS 精度丢失 (Long -> String)
   
-  # 💾 MyBatis-Plus 模块 (默认开启)
+  # 💾 MyBatis-Plus (含多租户隔离)
   mybatis-plus:
     enabled: true
-    enable-tenant-line: true # 开启多租户自动隔离插件
-    enable-pagination: true   # 开启物理分页
-    enable-block-attack: true # 开启防全表更新/删除保护
+    enable-tenant-line: true # 开启多租户字段过滤
+    db-type: mysql           # 指定数据库类型以优化分页 SQL
 ```
 
 ---
@@ -108,20 +104,21 @@ blue-ocean:
 ### 5.1 如何覆盖框架默认逻辑？
 框架内所有核心 Bean 均使用 `@ConditionalOnMissingBean` 标注。
 
-*   **Jackson 定制**：只需在您的项目中定义任何 `Jackson2ObjectMapperBuilderCustomizer`，Spring 将会自动聚合您的配置。
-*   **异常处理器定制**：您可以直接继承 `GlobalExceptionHandler` 并标注 `@RestControllerAdvice` 注册自己的 Bean 即可全量接管异常逻辑。
+*   **Jackson 定制**：只需自定义 `Jackson2ObjectMapperBuilderCustomizer` 即可实现配置聚合。
+*   **分布式锁定制**：直接定义自己的 `DistributedLockAspect` 即可通过 Bean 覆盖接管原有逻辑。
 
-### 5.2 业务开发规范建议
-1.  **异常捕获**：业务层严禁吞掉异常，应直接 `throw new BlueOceanBusinessException(...)`，由底座进行标准化 JSON 返回。
-2.  **用户信息**：通过 `UserContextUtil.getUserId()` 随时随地获取当前登录用户。
-3.  **懒加载 ext**：`CurrentUserInfo.getExt()` 支持懒加载初始化的原始引用，可直接进行 `put` 操作。
+### 5.2 开发规约
+1.  **异常捕获**：业务层严禁吞掉异常，应抛出 `BlueOceanBusinessException`。支持 SLF4J 风格占位符：
+    `throw new BlueOceanBusinessException(500, "用户{}不存在", userId);`
+2.  **断言工具**：优先使用 `BizAssertUtils` 进行业务校验，逻辑失败时会自动抛出标准业务异常。
+3.  **命名规范**：Boolean 属性严禁使用 `is` 前缀（如 `deleted`），确保护持序列化兼容性。
 
 ---
 
 ## 📅 6. 路线图 (Roadmap)
-*   [x] 1.0.0 - 核心底座、BOM 独立、Web/MP 增强
-*   [ ] 1.1.0 - Redis 分布式锁与缓存 Starter
-*   [ ] 1.2.0 - 基于虚拟线程的 Log Starter (TraceId)
+*   [x] 1.0.0 - 核心底座、BOM 独立、Web/MP/Redis 增强、分布式锁 AOP
+*   [ ] 1.1.0 - 基于虚拟线程的 Log Starter (TraceId 链路追踪)
+*   [ ] 1.2.0 - 定制化审计日志 AOP 模块 (Audit-Log)
 
 ---
 
