@@ -112,14 +112,3 @@ blue-ocean:
     `throw new BlueOceanBusinessException(500, "用户{}不存在", userId);`
 2.  **断言工具**：优先使用 `BizAssertUtils` 进行业务校验，逻辑失败时会自动抛出标准业务异常。
 3.  **命名规范**：Boolean 属性严禁使用 `is` 前缀（如 `deleted`），确保护持序列化兼容性。
-
----
-
-## 📅 6. 路线图 (Roadmap)
-*   [x] 1.0.0 - 核心底座、BOM 独立、Web/MP/Redis 增强、分布式锁 AOP
-*   [ ] 1.1.0 - 基于虚拟线程的 Log Starter (TraceId 链路追踪)
-*   [ ] 1.2.0 - 定制化审计日志 AOP 模块 (Audit-Log)
-
----
-
-**Maintenance by cecilylove.** 🌊
