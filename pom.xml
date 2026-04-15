@@ -11,8 +11,10 @@
     <name>blue-ocean-platform</name>
     <description>一个工程化底座平台</description>
 
-    <!-- BOM 已独立，不再作为子模块聚合构建 -->
+    <!-- 聚合构建所有核心模块 -->
     <modules>
+        <module>blue-ocean-dependencies</module>
+        <module>blue-ocean-boot-starter-parent</module>
         <module>blue-ocean-core</module>
         <module>blue-ocean-spring-boot-starter</module>
         <module>blue-ocean-spring-boot-starter-web</module>

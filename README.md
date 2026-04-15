@@ -23,11 +23,12 @@
 
 ## 🏗️ 2. 工程架构
 
-本项目采用 **Maven 多模块** 架构，遵循 **BOM -> Core -> Starter** 的职能解耦。
+本项目采用 **Maven 多模块** 架构，遵循 **BOM -> Parent -> Starter** 的职能解耦。
 
 ```text
 blue-ocean-platform (Root Aggregator)
-├── blue-ocean-dependencies (BOM - 独立发布的版本控制中心)
+├── blue-ocean-dependencies (BOM - 版本控制中心)
+├── blue-ocean-boot-starter-parent (业务接入父工程 - 承载官方环境与平台 BOM)
 ├── blue-ocean-core (核心通用模块 - 纯净 Java 工具、业务异常、标准 Result)
 ├── blue-ocean-spring-boot-starter (基础底座 - SpringContextAware & 基础增强)
 ├── blue-ocean-spring-boot-starter-web (Web 增强 - MVC 全局拦截、JSON 序列化精度修复)
@@ -39,14 +40,31 @@ blue-ocean-platform (Root Aggregator)
 
 ## 🚀 3. 快速开始 (Quick Start)
 
-### 3.1 本地安装 BOM
-由于采用了独立 BOM 设计，首次使用前需将版本控制中心 install 到本地私仓：
-```bash
-mvn clean install -pl blue-ocean-dependencies -N
+### 3.1 业务项目接入 (推荐)
+
+在业务服务的 `pom.xml` 中直接继承我们的 Parent 工程，即可一站式获得 Spring Boot 运行环境以及 Blue Ocean 的所有版本管理：
+
+```xml
+<parent>
+    <groupId>com.cecilylove</groupId>
+    <artifactId>blue-ocean-boot-starter-parent</artifactId>
+    <version>1.0.0</version>
+    <relativePath/>
+</parent>
+
+<dependencies>
+    <!-- 按需引入 Starter -->
+    <dependency>
+        <groupId>com.cecilylove</groupId>
+        <artifactId>blue-ocean-spring-boot-starter-web</artifactId>
+    </dependency>
+</dependencies>
 ```
 
-### 3.2 引入版本管理
-在业务服务的 `pom.xml` 中引入：
+### 3.2 手动引入 BOM (备选)
+
+如果你无法修改项目的 `<parent>`，也可以通过导入 BOM 的方式接入：
+
 ```xml
 <dependencyManagement>
     <dependencies>
@@ -59,22 +77,6 @@ mvn clean install -pl blue-ocean-dependencies -N
         </dependency>
     </dependencies>
 </dependencyManagement>
-```
-
-### 3.3 引入 Starter 对其
-```xml
-<dependencies>
-    <!-- Web & JSON 增强 -->
-    <dependency>
-        <groupId>com.cecilylove</groupId>
-        <artifactId>blue-ocean-spring-boot-starter-web</artifactId>
-    </dependency>
-    <!-- Redis & 分布式锁 -->
-    <dependency>
-        <groupId>com.cecilylove</groupId>
-        <artifactId>blue-ocean-spring-boot-starter-redis</artifactId>
-    </dependency>
-</dependencies>
 ```
 
 ---
