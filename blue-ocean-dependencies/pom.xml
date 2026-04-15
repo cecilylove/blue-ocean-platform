@@ -7,15 +7,16 @@
     <!-- 独立顶层 POM，不继承任何 parent，参考 spring-boot-dependencies 设计 -->
     <groupId>com.cecilylove</groupId>
     <artifactId>blue-ocean-dependencies</artifactId>
-    <version>1.0.0</version>
+    <version>${revision}</version>
     <packaging>pom</packaging>
 
     <name>blue-ocean-dependencies</name>
     <description>版本控制中心 (BOM) - 所有版本号都在这里集中定义，参考 spring-boot-dependencies 的独立设计</description>
 
     <properties>
+        <revision>1.0.0</revision>
         <!-- Blue Ocean 自身版本 -->
-        <blue-ocean.version>1.0.0</blue-ocean.version>
+        <blue-ocean.version>${revision}</blue-ocean.version>
 
         <!-- Spring Boot 版本 -->
         <spring-boot.version>3.5.10</spring-boot.version>
@@ -107,5 +108,35 @@
         </dependencies>
     </dependencyManagement>
 
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>flatten-maven-plugin</artifactId>
+                <version>1.6.0</version>
+                <configuration>
+                    <updatePomFile>true</updatePomFile>
+                    <flattenMode>resolveCiFriendliesOnly</flattenMode>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>flatten</id>
+                        <phase>process-resources</phase>
+                        <goals>
+                            <goal>flatten</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>flatten.clean</id>
+                        <phase>clean</phase>
+                        <goals>
+                            <goal>clean</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
 
 </project>
