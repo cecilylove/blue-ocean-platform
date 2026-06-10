@@ -1,5 +1,6 @@
 package com.cecilylove.blueocean.redis.aspect;
 
+import com.cecilylove.blueocean.core.exception.BlueOceanBusinessException;
 import com.cecilylove.blueocean.redis.annotation.DistributedLock;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -52,8 +53,7 @@ public class DistributedLockAspect {
                 return joinPoint.proceed();
             } else {
                 log.warn("获取分布式锁超时: {}", lockKey);
-                // 暂时直接抛出运行时异常，业务层可捕获
-                throw new RuntimeException("系统繁忙，请稍后再试");
+                throw new BlueOceanBusinessException("系统繁忙，请稍后再试");
             }
         } finally {
             if (locked && lock.isHeldByCurrentThread()) {

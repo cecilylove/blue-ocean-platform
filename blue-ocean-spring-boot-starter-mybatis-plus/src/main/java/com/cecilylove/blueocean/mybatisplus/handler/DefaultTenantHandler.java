@@ -2,8 +2,14 @@ package com.cecilylove.blueocean.mybatisplus.handler;
 
 import com.baomidou.mybatisplus.extension.plugins.handler.TenantLineHandler;
 import com.cecilylove.blueocean.core.context.UserContextUtil;
+import com.cecilylove.blueocean.core.enums.CommonRespCode;
+import com.cecilylove.blueocean.core.exception.BlueOceanBusinessException;
+import com.cecilylove.blueocean.mybatisplus.properties.MybatisPlusProperties;
+import lombok.RequiredArgsConstructor;
 import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.expression.LongValue;
+
+import java.util.Set;
 
 /**
  * 默认租户处理器
@@ -12,28 +18,36 @@ import net.sf.jsqlparser.expression.LongValue;
  * @author cecilylove
  * @since 1.0.0
  */
+@RequiredArgsConstructor
 public class DefaultTenantHandler implements TenantLineHandler {
+
+    private final MybatisPlusProperties properties;
 
     @Override
     public Expression getTenantId() {
         Long tenantId = UserContextUtil.getTenantId();
         if (tenantId == null) {
-            // 如果没拿租户ID（比如后台任务或未登录），给个默认值 0
-            return new LongValue(0L);
+            throw new BlueOceanBusinessException(CommonRespCode.UNAUTHORIZED, "租户上下文缺失，请检查登录态或自定义 TenantLineHandler");
         }
         return new LongValue(tenantId);
     }
 
     @Override
     public boolean ignoreTable(String tableName) {
-        // 默认不忽略任何表，建议在业务配置里做过滤
-        // 或者在这里写死一些系统表，比如 "sys_user", "sys_role" 等不需要隔离的表
-        return false;
+        Set<String> ignoreTables = properties.getTenantIgnoreTables();
+        if (tableName == null || ignoreTables == null || ignoreTables.isEmpty()) {
+            return false;
+        }
+        return ignoreTables.stream().anyMatch(tableName::equalsIgnoreCase);
     }
 
     @Override
     public String getTenantIdColumn() {
-        // 默认数据库字段名叫 tenant_id
-        return "tenant_id";
+        String tenantIdColumn = properties.getTenantIdColumn();
+        return hasText(tenantIdColumn) ? tenantIdColumn : "tenant_id";
+    }
+
+    private boolean hasText(String value) {
+        return value != null && !value.trim().isEmpty();
     }
 }
