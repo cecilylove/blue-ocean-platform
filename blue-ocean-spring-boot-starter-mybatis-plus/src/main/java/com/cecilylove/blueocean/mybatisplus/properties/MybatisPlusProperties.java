@@ -4,6 +4,9 @@ import com.baomidou.mybatisplus.annotation.DbType;
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
+import java.util.Collections;
+import java.util.Set;
+
 /**
  * Mybatis Plus配置
  * 插件：
@@ -59,4 +62,22 @@ public class MybatisPlusProperties {
      * 默认 true (为了安全，默认开启)
      */
     private boolean enableBlockAttack = true;
+
+    /**
+     * 是否开启多租户插件
+     * 默认 true
+     */
+    private boolean enableTenantLine = true;
+
+    /**
+     * 租户字段名
+     * 默认 tenant_id
+     */
+    private String tenantIdColumn = "tenant_id";
+
+    /**
+     * 多租户忽略表名集合
+     * 默认空集合
+     */
+    private Set<String> tenantIgnoreTables = Collections.emptySet();
 }

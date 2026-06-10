@@ -64,7 +64,7 @@ public class MybatisPlusAutoConfiguration {
     @ConditionalOnMissingBean(TenantLineHandler.class)
     @ConditionalOnProperty(prefix = MybatisPlusProperties.PREFIX, name = MybatisPlusProperties.ENABLE_TENANT_LINE, havingValue = "true", matchIfMissing = true)
     public TenantLineHandler tenantLineHandler() {
-        return new DefaultTenantHandler();
+        return new DefaultTenantHandler(properties);
     }
 
     @Bean

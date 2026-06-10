@@ -4,7 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
 
 import java.util.Arrays;
-import java.util.Collection;
+import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
@@ -283,7 +283,7 @@ public class RedisUtils {
             return redisTemplate.opsForSet().members(key);
         } catch (Exception e) {
             log.error("Redis 读取 Set 内容异常: key={}", key, e);
-            return null;
+            return Collections.emptySet();
         }
     }
 
@@ -394,7 +394,7 @@ public class RedisUtils {
             return redisTemplate.opsForList().range(key, start, end);
         } catch (Exception e) {
             log.error("Redis 读取 List 内容异常: key={}", key, e);
-            return null;
+            return Collections.emptyList();
         }
     }
 
